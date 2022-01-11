@@ -24,6 +24,12 @@ class _MesngerState extends State<Messnger> {
 
   TextEditingController _messnger = TextEditingController();
   @override
+  void dispose() {
+    super.dispose();
+    _messnger.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
@@ -33,6 +39,8 @@ class _MesngerState extends State<Messnger> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               StreamBuilder<QuerySnapshot>(
+                stream:
+                    FirebaseFirestore.instance.collection("msg").snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     return Text('error');
@@ -61,29 +69,32 @@ class _MesngerState extends State<Messnger> {
                                 decoration: BoxDecoration(
                                     color: Colors.amber,
                                     borderRadius: BorderRadius.circular(15)),
-                                child: Text(_msg[index].messnger ?? 'no name'));
+                                child: Text(_msg[index].messnger!));
                           }));
                 },
-                stream:
-                    FirebaseFirestore.instance.collection("msg").snapshots(),
               ),
               Row(
                 children: [
                   Expanded(
                     child: TextFormField(
                       controller: _messnger,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "message must contain text";
+                        }
+                        return null;
+                      },
                     ),
                   ),
                   ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (_globalKey.currentState!.validate()) {
                           MSG _msg = MSG(messnger: _messnger.value.text);
                           _messnger.text = "";
 
-                          FirebaseFirestore.instance
+                          await FirebaseFirestore.instance
                               .collection("msg")
-                              .doc()
-                              .set(_msg.toMap(), SetOptions(merge: true));
+                              .add(_msg.toMap());
                         }
                       },
                       child: Text("send"))
