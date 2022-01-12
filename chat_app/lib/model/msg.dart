@@ -1,13 +1,21 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class MSG {
-  String? messnger;
+  String? message;
   String? username;
-  MSG({this.messnger, this.username});
+  String? id;
+  Timestamp? createdAt;
+  MSG({this.message, this.username, this.id, this.createdAt});
 
-  factory MSG.fromMap(map) {
-    return MSG(messnger: map['messnger'], username: map['username']);
-  }
-
-  Map<String, dynamic> toMap() {
-    return {'messnger': messnger, 'username': username};
-  }
+  MSG.fromJson(Map<String, dynamic> json)
+      : message = json['message'],
+        username = json['username'],
+        createdAt = json['createdAt'],
+        id = json['id'];
+  Map<String, dynamic> toJson() => {
+        'message': message,
+        'username': username,
+        'id': id,
+        'createdAt': createdAt
+      };
 }

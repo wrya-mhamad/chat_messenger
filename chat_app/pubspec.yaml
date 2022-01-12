@@ -39,6 +39,8 @@ dependencies:
   firebase_core: ^1.10.6
   provider: ^6.0.2
   fluttertoast: ^8.0.8
+  flutter_slidable: ^0.6.0
+  
 
 dev_dependencies:
   flutter_test:
